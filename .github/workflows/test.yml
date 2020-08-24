@@ -1,0 +1,140 @@
+name: Integration test for Ansible plays
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+    branches:
+      - master
+
+jobs:
+  smoke:
+    name: Smoketest test-tf-generation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: pip install -r ./requirements/pip.txt
+      - run: ansible-playbook ./__tests__/test-tf-generation.yml
+
+  checkLabel:
+    name: Please request integration test and review
+    needs: smoke
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - run: if [ ${{ contains( github.event.pull_request.labels.*.name, 'action/integration-test') }} == false ]; then exit 1; else exit 0; fi
+  test:
+    name: Integration Test
+    needs: checkLabel
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    env:
+      INVENTORY_PATH: __tests__/inventory.yml
+      DOMAIN: pr-${{ github.run_id }}-caddy.test.stackhead.io
+      WEBSERVER: caddy
+    steps:
+    - uses: actions/checkout@v2
+    - name: Print Ansible version
+      run: ansible --version
+    - uses: webfactory/ssh-agent@v0.2.0
+      with:
+        ssh-private-key: "${{ secrets.SSH_PRIVATE_KEY }}"
+    - name: Setup Hetzner server
+      id: setup_server
+      uses: saitho/hetzner-cloud-action@v1.1.0
+      with:
+        action: create
+        server_name: "pr-${{ github.run_id }}-caddy"
+        server_image: ubuntu-18.04
+        server_location: fsn1
+        server_ssh_key_name: gh-actions
+        wait_for_ssh: 1
+      env:
+        API_TOKEN: ${{ secrets.HETZNER_TOKEN }}
+    - name: Add DNS record
+      uses: saitho/create-dns-record@patch-1
+      with:
+        type: "A"
+        name: "${{ env.DOMAIN }}"
+        content: "${{ steps.setup_server.outputs.hcloud_server_created_ipv4 }}"
+        ttl: 1
+        proxied: 0
+        token: "${{ secrets.CLOUDFLARE_TOKEN }}"
+        zone: "${{ secrets.CLOUDFLARE_ZONE }}"
+    - name: Add DNS record for subdomain
+      uses: saitho/create-dns-record@patch-1
+      with:
+        type: "A"
+        name: "sub.${{ env.DOMAIN }}"
+        content: "${{ steps.setup_server.outputs.hcloud_server_created_ipv4 }}"
+        ttl: 1
+        proxied: 0
+        token: "${{ secrets.CLOUDFLARE_TOKEN }}"
+        zone: "${{ secrets.CLOUDFLARE_ZONE }}"
+    - name: Add IP to known_hosts
+      run: |
+        ssh-keyscan -v -T 30 ${{ steps.setup_server.outputs.hcloud_server_created_ipv4 }} >> ~/.ssh/known_hosts
+    - name: "Test step: Provision server"
+      run: ./__tests__/steps/test_provision.sh
+      env:
+        IP: ${{ steps.setup_server.outputs.hcloud_server_created_ipv4 }}
+    - name: "Test step: Deploy application"
+      run: ./__tests__/steps/test_deploy.sh
+      env:
+        IP: ${{ steps.setup_server.outputs.hcloud_server_created_ipv4 }}
+    - name: "Test step: Validate deployment"
+      run: ./__tests__/steps/test_validate-deployment.sh
+    - name: "Test step: Destroy deployment"
+      run: ./__tests__/steps/test_destroy.sh
+    #- uses: mxschmitt/action-tmate@v2
+    #  if: always() && matrix.webserver == 'caddy'
+    - name: Remove DNS record
+      uses: saitho/delete-dns-record@saitho-patch-1
+      if: always()
+      with:
+        name: "${{ env.DOMAIN }}"
+        token: "${{ secrets.CLOUDFLARE_TOKEN }}"
+        zone: "${{ secrets.CLOUDFLARE_ZONE }}"
+    - name: Remove DNS record for subdomain
+      uses: saitho/delete-dns-record@saitho-patch-1
+      if: always()
+      with:
+        name: "sub.${{ env.DOMAIN }}"
+        token: "${{ secrets.CLOUDFLARE_TOKEN }}"
+        zone: "${{ secrets.CLOUDFLARE_ZONE }}"
+    - name: Remove Hetzner server
+      uses: saitho/hetzner-cloud-action@v1.1.0
+      if: always()
+      with:
+        action: remove
+        server_id: "${{ steps.setup_server.outputs.hcloud_server_id }}"
+      env:
+        API_TOKEN: ${{ secrets.HETZNER_TOKEN }}
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      GIT_AUTHOR_EMAIL: 64205253+stackhead-bot@users.noreply.github.com
+      GIT_AUTHOR_NAME: stackhead-bot
+      GIT_COMMITTER_EMAIL: 64205253+stackhead-bot@users.noreply.github.com
+      GIT_COMMITTER_NAME: stackhead-bot
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: PNPM install
+        run: npm i -g pnpm && pnpm i -P
+      - run: pnpm install
+      - name: Semantic Release Action
+        id: release
+        uses: saitho/semantic-release-action-pnpm@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Import repository into Ansible Galaxy
+        uses: 0x022b/galaxy-role-import-action@v1
+        with:
+          galaxy_api_key: ${{ secrets.galaxy_api_key }}
+        if: steps.release.outputs.new_release_published
