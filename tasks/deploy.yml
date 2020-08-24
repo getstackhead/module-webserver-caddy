@@ -1,21 +1,15 @@
-# This task should configure the software for the given project.
+# This task list generates the Caddy configuration for a project
 ---
-- name: "Project definition contents for project named {{ project_name }}"
-  debug:
-    msg: "{{ app_config }}"
-- name: "Terraform files in this folder will be applied after during the last step of deployment"
-  debug:
-    msg: "{{ stackhead__tf_project_folder }}"
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+  ignore_errors: yes
 
-# If you need to create SSL certificates for the domain
-#- include_tasks: "{{ stackhead__roles }}/stackhead_module_api/tasks/ssl-certificate.yml"
+- name: Check if authentications are defined
+  set_fact:
+    auths_basic: "{{ auths_basic|default([]) + item.security.authentication }}"
+  when: item.security is defined and item.security.authentication is defined
+  with_items: "{{ app_config.domains }}"
 
-# If you need the  SSL certificates to be generated right now, run Terraform
-# - import_tasks: "{{ stackhead__roles }}/stackhead_module_api/tasks/terraform.yml"
+- name: Generate Caddy Terraform file
+  include_tasks: "{{ role_path }}/tasks/steps/generate-serverconfig-tf.yml"
 
-- name: "Certificate private key will be found here after Terraform was executed"
-  debug:
-    msg: "{{ stackhead__certificates_project_folder }}/privkey.pem"
-- name: "Certificate full chain will be found here after Terraform was executed"
-  debug:
-    msg: "{{ stackhead__certificates_project_folder }}/fullchain.pem"

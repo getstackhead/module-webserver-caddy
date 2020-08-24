@@ -1,6 +1,6 @@
 ---
 type: webserver
-#terraform:
-#  provider:
-#    name: nginx
-#    url: https://github.com/getstackhead/terraform-nginx/releases/download/v1.3.0/terraform-provider-nginx
+terraform:
+  provider:
+    name: caddy
+    url: https://github.com/getstackhead/terraform-caddy/releases/download/v1.0.0/terraform-provider-caddy

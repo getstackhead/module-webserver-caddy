@@ -90,10 +90,15 @@
                 src: data
                 dest: /var/lib/mysql
   tasks:
+    - set_fact:
+        containerapp__expose: "{{ containerapp__expose|default([]) + item.expose }}"
+      when: item.expose is defined and item.expose not in containerapp__expose|default([])
+      with_items: "{{ app_config.domains }}"
     - block:
-        - debug:
-            msg: "Run your tests here by importing the respective tasks"
-        #- name: Generate Server Block Terraform file
-        #  import_tasks: "../tasks/steps/generate-serverblock-tf.yml"
+        - name: Generate Caddy Terraform file
+          import_tasks: "../tasks/steps/generate-serverconfig-tf.yml"
+        - name: Generate Caddyfile
+          import_tasks: "../tasks/steps/generate-caddyfile-tf.yml"
       vars:
         role_path: ".."
+        caddy_root: "."
