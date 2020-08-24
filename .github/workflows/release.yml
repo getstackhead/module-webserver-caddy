@@ -3,11 +3,13 @@ name: Release
 
 on:
   push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+    branches-ignore:
+      - '**'
+
+#on:
+#  push:
+#    branches:
+#      - master
 
 jobs:
   test:
