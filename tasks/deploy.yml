@@ -1,0 +1,21 @@
+# This task should configure the software for the given project.
+---
+- name: "Project definition contents for project named {{ project_name }}"
+  debug:
+    msg: "{{ app_config }}"
+- name: "Terraform files in this folder will be applied after during the last step of deployment"
+  debug:
+    msg: "{{ stackhead__tf_project_folder }}"
+
+# If you need to create SSL certificates for the domain
+#- include_tasks: "{{ stackhead__roles }}/stackhead_module_api/tasks/ssl-certificate.yml"
+
+# If you need the  SSL certificates to be generated right now, run Terraform
+# - import_tasks: "{{ stackhead__roles }}/stackhead_module_api/tasks/terraform.yml"
+
+- name: "Certificate private key will be found here after Terraform was executed"
+  debug:
+    msg: "{{ stackhead__certificates_project_folder }}/privkey.pem"
+- name: "Certificate full chain will be found here after Terraform was executed"
+  debug:
+    msg: "{{ stackhead__certificates_project_folder }}/fullchain.pem"
