@@ -18,3 +18,4 @@ dependencies:
   #  version: v1.0.0
   - src: git+https://github.com/saitho/ansible-role-caddy.git
     version: caddy-v2
+    name: ansible-role-caddy
