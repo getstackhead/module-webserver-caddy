@@ -1,11 +1,6 @@
 # This task list sets up Caddy during server setup
 ---
 - name: Setup Caddy
-  vars:
-    caddy_user: "stackhead"
-    caddy_group: "stackhead"
-    caddy_version: "2.1.1"
-    caddy_install_source: package
   include_role:
     name: samdoran.caddy
 - name: Overwrite Caddyfile
