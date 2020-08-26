@@ -4,7 +4,7 @@ name: Release
 on:
   workflow_run:
     workflows: ["Test"]
-    branches: [main]
+    branches: [master]
     types:
       - completed
 
