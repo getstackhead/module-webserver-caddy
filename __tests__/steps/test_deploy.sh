@@ -11,4 +11,4 @@ if [ "$WEBSERVER" == 'caddy' ]; then WEBSERVER='getstackhead.stackhead_webserver
 
 sed -e "s/\${ipaddress}/${IP}/" -e "s/\${webserver}/${WEBSERVER}/" -e "s/\${application}/container/" __tests__/inventory.dist.yml > __tests__/inventory.yml
 sed -e "s/\${domain}/${DOMAIN}/" __tests__/projects/container.dist.yml > __tests__/projects/container.yml
-TEST=1 ansible-playbook application-deploy.yml -i "${INVENTORY_PATH}" -vv
+TEST=1 ansible-playbook stackhead-repo/ansible/application-deploy.yml -i "${INVENTORY_PATH}" -vv

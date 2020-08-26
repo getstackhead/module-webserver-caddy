@@ -33,6 +33,8 @@ jobs:
       WEBSERVER: caddy
     steps:
     - uses: actions/checkout@v2
+    - name: Get latest StackHead version
+      run: git clone https://github.com/getstackhead/stackhead.git stackhead-repo --depth 1
     - name: Print Ansible version
       run: ansible --version
     - uses: webfactory/ssh-agent@v0.2.0
