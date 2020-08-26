@@ -9,7 +9,7 @@ if [ "$WEBSERVER" == 'caddy' ]; then WEBSERVER='getstackhead.stackhead_webserver
 sed -e "s/\${ipaddress}/${IP}/" -e "s/\${webserver}/${WEBSERVER}/" __tests__/inventory.dist.yml > $INVENTORY_PATH
 
 # Install dependencies
-pip install -r stackhead-repo/ansible/requirements/pip.txt
+pip install -r requirements/pip.txt
 ansible-galaxy install -r stackhead-repo/ansible/requirements/requirements.yml
 
 # Provision server
