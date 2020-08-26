@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get latest StackHead version
-        run: git clone https://github.com/getstackhead/stackhead.git stackhead-repo --depth 1
+        run: git clone --depth 1 --branch master https://github.com/getstackhead/stackhead.git stackhead-repo
       - run: pip install -r ./requirements/pip.txt
       - run: ansible-playbook ./__tests__/test-tf-generation.yml
 
@@ -36,7 +36,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Get latest StackHead version
-      run: git clone https://github.com/getstackhead/stackhead.git stackhead-repo --depth 1
+      run: git clone --depth 1 --branch feature/modularize_caddy https://github.com/getstackhead/stackhead.git stackhead-repo
     - name: Print Ansible version
       run: ansible --version
     - uses: webfactory/ssh-agent@v0.2.0
