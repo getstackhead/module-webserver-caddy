@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Get latest StackHead version
+        run: git clone https://github.com/getstackhead/stackhead.git stackhead-repo --depth 1
       - run: pip install -r ./requirements/pip.txt
       - run: ansible-playbook ./__tests__/test-tf-generation.yml
 
