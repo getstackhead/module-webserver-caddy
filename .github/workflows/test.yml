@@ -5,6 +5,10 @@ on:
     types: [opened, labeled, unlabeled, synchronize]
     branches: [master]
 
+env:
+  ROLE_NAME: getstackhead.stackhead_webserver_caddy
+  WEBSERVER: getstackhead.stackhead_webserver_caddy
+
 jobs:
   smoke:
     name: Smoketest test-tf-generation
