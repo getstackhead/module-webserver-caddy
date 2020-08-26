@@ -1,5 +1,14 @@
 ---
-- template:
-    src: "{{ role_path }}/templates/terraform/caddy_server.tf.j2"
-    dest: "{{ stackhead__tf_project_folder }}/caddy_server.tf"
-    force: true
+- block:
+    - template:
+        src: "{{ role_path }}/templates/terraform/caddy_server.tf.j2"
+        dest: "{{ dest_file }}"
+        force: true
+    - block:
+        - slurp: src="{{ dest_file }}"
+          register: slurpfile
+        - debug: msg="{{ slurpfile['content'] | b64decode }}"
+      when: lookup('env','TEST') == '1'
+  vars:
+    dest_file: "{{ stackhead__tf_project_folder }}/caddy_server.tf"
+
