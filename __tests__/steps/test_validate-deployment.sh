@@ -22,6 +22,7 @@ function http_check() {
   fi
 }
 
+DOMAIN="${DOMAIN_NAME}.${DOMAIN_SUFFIX}"
 openssl version
 curl -V
 ping -c 5 "${DOMAIN}"
