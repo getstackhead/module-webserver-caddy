@@ -1,0 +1,5 @@
+---
+caddy_user: "stackhead"
+caddy_group: "stackhead"
+caddy_version: "2.1.1"
+caddy_install_source: "package"

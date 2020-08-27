@@ -1,13 +1,16 @@
 # This task list sets up Caddy during server setup
 ---
-- name: Setup Caddy
+- debug:
+    msg: "{{ caddy_install_source }}"
+- debug:
+    msg: "{{ caddy_install_source }}"
   vars:
-    caddy_user: "stackhead"
-    caddy_group: "stackhead"
-    caddy_version: "2.1.1"
     caddy_install_source: package
+- name: Setup Caddy
   include_role:
     name: samdoran.caddy
+  vars:
+    caddy_install_source: package
 - name: Overwrite Caddyfile
   include_tasks: "{{ role_path }}/tasks/steps/generate-caddyfile-tf.yml"
 - name: Restart Caddy

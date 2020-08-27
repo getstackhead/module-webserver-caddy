@@ -1,4 +1,13 @@
 ---
-- template:
-    src: "{{ role_path }}/templates/caddy/Caddyfile.j2"
-    dest: "{{ caddy_root|default('/etc/caddy') }}/Caddyfile"
+- block:
+    - template:
+        src: "{{ role_path }}/templates/caddy/Caddyfile.j2"
+        dest: "{{ dest_file }}"
+    - block:
+        - slurp: src="{{ dest_file }}"
+          register: slurpfile
+        - debug: msg="{{ slurpfile['content'] | b64decode }}"
+      when: lookup('env','TEST') == '1'
+  vars:
+    dest_file: "{{ caddy_root|default('/etc/caddy') }}/Caddyfile"
+
