@@ -115,32 +115,3 @@ jobs:
         server_id: "${{ steps.setup_server.outputs.hcloud_server_id }}"
       env:
         API_TOKEN: ${{ secrets.HETZNER_TOKEN }}
-  release:
-    needs: test
-    runs-on: ubuntu-latest
-    env:
-      GIT_AUTHOR_EMAIL: 64205253+stackhead-bot@users.noreply.github.com
-      GIT_AUTHOR_NAME: stackhead-bot
-      GIT_COMMITTER_EMAIL: 64205253+stackhead-bot@users.noreply.github.com
-      GIT_COMMITTER_NAME: stackhead-bot
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - name: PNPM install
-        run: npm i -g pnpm && pnpm i -P
-      - run: pnpm install
-      - name: Semantic Release Action
-        id: release
-        uses: saitho/semantic-release-action-pnpm@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      - name: Import repository into Ansible Galaxy
-        uses: 0x022b/galaxy-role-import-action@v1
-        with:
-          galaxy_api_key: ${{ secrets.galaxy_api_key }}
-        if: steps.release.outputs.new_release_published
