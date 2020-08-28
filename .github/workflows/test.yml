@@ -76,10 +76,11 @@ jobs:
         proxied: 0
         token: "${{ secrets.CLOUDFLARE_TOKEN }}"
         zone: "${{ secrets.CLOUDFLARE_ZONE }}"
-    - uses: getstackhead/stackhead@feature/integration-test-action
+    - uses: getstackhead/stackhead@master
       with:
         ipaddress: ${{ steps.setup_server.outputs.hcloud_server_created_ipv4 }}
         domain: '${{ env.DOMAIN_NAME }}.${{ env.DOMAIN_SUFFIX }}'
+        domain2: 'sub.${{ env.DOMAIN_NAME }}.${{ env.DOMAIN_SUFFIX }}'
         webserver: 'getstackhead.stackhead_webserver_caddy'
         rolename: 'getstackhead.stackhead_webserver_caddy'
     #- uses: mxschmitt/action-tmate@v2
