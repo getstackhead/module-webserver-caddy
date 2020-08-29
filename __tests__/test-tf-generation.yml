@@ -1,8 +1,10 @@
 ---
 - hosts: localhost
   connection: local
+  vars:
+    stackhead__roles: "~/.ansible/collections/ansible_collections/getstackhead/stackhead/roles"
   tasks:
-    - include_vars: "../stackhead-repo/ansible/__tests__/variables.yml"
+    - include_vars: "{{ stackhead__roles }}/stackhead_module_api/testdata/variables.yml"
     - set_fact:
         containerapp__expose: "{{ containerapp__expose|default([]) + item.expose }}"
       when: item.expose is defined and item.expose not in containerapp__expose|default([])

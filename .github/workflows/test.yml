@@ -17,8 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Install Ansible v2.10 alpha (GH actions currently uses 2.9)
+        run: ANSIBLE_SKIP_CONFLICT_CHECK=1 pip install --user ansible==2.10.0a9 && ansible --version
       - name: Get latest StackHead version
-        run: "git clone --depth 1 --branch master https://github.com/getstackhead/stackhead.git stackhead-repo"
+        run: ansible-galaxy collection install git+https://github.com/getstackhead/stackhead.git,next -f
       - run: pip install -r ./requirements/pip.txt
       - run: ansible-playbook ./__tests__/test-tf-generation.yml
 
@@ -38,6 +40,8 @@ jobs:
       INVENTORY_PATH: __tests__/inventory.yml
     steps:
     - uses: actions/checkout@v2
+    - name: Install Ansible v2.10 alpha (GH actions currently uses 2.9)
+      run: ANSIBLE_SKIP_CONFLICT_CHECK=1 pip install --user ansible==2.10.0a9 && ansible --version
     - run: pip install -r ./requirements/pip.txt
     - name: Print Ansible version
       run: ansible --version
@@ -76,7 +80,7 @@ jobs:
         proxied: 0
         token: "${{ secrets.CLOUDFLARE_TOKEN }}"
         zone: "${{ secrets.CLOUDFLARE_ZONE }}"
-    - uses: "getstackhead/stackhead@master"
+    - uses: getstackhead/stackhead@next
       with:
         ipaddress: ${{ steps.setup_server.outputs.hcloud_server_created_ipv4 }}
         domain: '${{ env.DOMAIN_NAME }}.${{ env.DOMAIN_SUFFIX }}'
