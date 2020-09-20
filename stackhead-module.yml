@@ -2,5 +2,8 @@
 type: webserver
 terraform:
   provider:
+    vendor: getstackhead
     name: caddy
+    version: 1.0.1
+    # deprecated: remove url with Terraform 0.13 in main project
     url: https://github.com/getstackhead/terraform-caddy/releases/download/v1.0.0/terraform-provider-caddy
