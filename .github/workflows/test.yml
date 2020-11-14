@@ -40,8 +40,14 @@ jobs:
       INVENTORY_PATH: __tests__/inventory.yml
     steps:
     - uses: actions/checkout@v2
+    - name: Set up Python 3
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Uninstall old Ansible
+      run: ansible --version && sudo apt purge ansible -y
     - name: Install Ansible v2.10 alpha (GH actions currently uses 2.9)
-      run: ANSIBLE_SKIP_CONFLICT_CHECK=1 pip install --user ansible==2.10.0a9 && ansible --version
+      run: sudo python -m pip install ansible==2.10.0a9 && ansible --version
     - run: pip install -r ./requirements/pip.txt
     - name: Print Ansible version
       run: ansible --version
