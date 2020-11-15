@@ -12,7 +12,7 @@
   vars:
     caddy_install_source: package
 - name: Overwrite Caddyfile
-  include_tasks: "{{ module_role_path|default(role_path) }}/tasks/steps/generate-caddyfile-tf.yml"
+  include_tasks: "{{ module_role_path|default(role_path) }}/tasks/caddy_steps/generate-caddyfile-tf.yml"
 - name: Restart Caddy
   command: /bin/true
   notify:
