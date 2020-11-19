@@ -15,5 +15,5 @@
         - name: Generate Caddyfile
           import_tasks: "../tasks/steps/generate-caddyfile-tf.yml"
       vars:
-        role_path: ".."
+        module_role_path: ".."
         caddy_root: "."

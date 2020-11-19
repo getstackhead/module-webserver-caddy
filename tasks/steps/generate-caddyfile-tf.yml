@@ -1,7 +1,7 @@
 ---
 - block:
     - template:
-        src: "{{ role_path }}/templates/caddy/Caddyfile.j2"
+        src: "{{ module_role_path|default(role_path) }}/templates/caddy/Caddyfile.j2"
         dest: "{{ dest_file }}"
     - block:
         - slurp: src="{{ dest_file }}"

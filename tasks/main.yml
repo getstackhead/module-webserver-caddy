@@ -1,2 +1,2 @@
 ---
-- include_tasks: "{{ role_path }}/tasks/{{ stackhead_action }}.yml"
+- include_tasks: "{{ module_role_path|default(role_path) }}/tasks/{{ stackhead_action }}.yml"
