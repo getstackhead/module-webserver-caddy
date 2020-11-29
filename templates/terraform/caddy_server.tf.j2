@@ -31,7 +31,7 @@ EOF
 
   depends_on = [
 {% for expose in containerapp__expose if expose.external_port != 443 %}
-{% if not loop.first %},{% endif %}docker_container.stackhead-{{ project_name }}-{{ expose.service }}
+{% if not loop.first %},{% endif %}{{ container_resource_name }}.stackhead-{{ project_name }}-{{ expose.service }}
 {% endfor %}
   ]
 
