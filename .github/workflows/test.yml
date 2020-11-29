@@ -86,7 +86,7 @@ jobs:
         proxied: 0
         token: "${{ secrets.CLOUDFLARE_TOKEN }}"
         zone: "${{ secrets.CLOUDFLARE_ZONE }}"
-    - uses: getstackhead/stackhead@next
+    - uses: getstackhead/stackhead/actions/integration-test@next
       with:
         ipaddress: ${{ steps.setup_server.outputs.hcloud_server_created_ipv4 }}
         domain: '${{ env.DOMAIN_NAME }}.${{ env.DOMAIN_SUFFIX }}'
