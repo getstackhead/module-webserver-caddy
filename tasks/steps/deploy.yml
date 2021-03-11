@@ -1,9 +1,5 @@
 # This task list generates the Caddy configuration for a project
 ---
-- name: Include OS-specific variables.
-  include_vars: "{{ ansible_os_family }}.yml"
-  ignore_errors: yes
-
 - name: Check if authentications are defined
   set_fact:
     auths_basic: "{{ auths_basic|default([]) + item.security.authentication }}"
