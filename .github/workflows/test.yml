@@ -92,6 +92,8 @@ jobs:
           proxied: 0
           token: "${{ secrets.CLOUDFLARE_TOKEN }}"
           zone: "${{ secrets.CLOUDFLARE_ZONE }}"
+      - name: Install samdoran.caddy dependency
+        run: ansible-galaxy install samdoran.caddy,2.1.0
       - uses: getstackhead/stackhead/actions/integration-test@next
         with:
           ipaddress: ${{ steps.setup_server.outputs.hcloud_server_created_ipv4 }}
