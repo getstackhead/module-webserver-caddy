@@ -11,9 +11,9 @@
       with_items: "{{ app_config.domains }}"
     - block:
         - name: Generate Caddy Terraform file
-          import_tasks: "../tasks/steps/generate-serverconfig-tf.yml"
+          import_tasks: "{{ module_role_path | default(role_path) }}/tasks/caddy_steps/generate-serverconfig-tf.yml"
         - name: Generate Caddyfile
-          import_tasks: "../tasks/steps/generate-caddyfile-tf.yml"
+          import_tasks: "{{ module_role_path | default(role_path) }}/tasks/caddy_steps/generate-caddyfile-tf.yml"
       vars:
         module_role_path: ".."
         caddy_root: "."

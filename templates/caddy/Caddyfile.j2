@@ -1,7 +1,7 @@
 #jinja2: trim_blocks:False
 {
 {% if lookup('env','TEST') == '1' %}    acme_ca https://acme-staging-v02.api.letsencrypt.org/directory{% endif %}
-    email certificate@saitho.me
+    email {{ certificates_email_address }}
 }
 
 *:80 {
